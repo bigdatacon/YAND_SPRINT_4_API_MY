@@ -98,7 +98,7 @@ self.redis.get(key)? Там же в ключ передается filter_genre, 
 
 4. Верно ли что fast_api В принципе должна быть внутри папки movies (проект)?
 5.Могли бы Вы напомнить почему где то в докер-компоуз есть блок билд а где то нет? build: и что значит блок  context: postgres_to_es (например в блоке для etl: context: postgres_to_es)
-6. Что в файле movies_admin/dockerfile значат эти строки (EXPOSE - я так понимаю порт но почему так написан) и я не нашел такую директорию /code?
+6. Что в файле movies_admin/dockerfile значат Workdir /code? Я такую не нашел, это какя то директория в файловой системе?
 
 FROM python:3.10
 EXPOSE 8000
