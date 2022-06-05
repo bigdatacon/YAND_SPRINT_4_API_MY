@@ -1,0 +1,8 @@
+FROM ubuntu:18.04
+
+RUN apt update -y
+RUN ls
+RUN apt install -y python3
+
+CMD ["python3"]
+

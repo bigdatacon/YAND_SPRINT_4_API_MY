@@ -1,0 +1,52 @@
+#1 после запуска мейн не открывается страница http://0.0.0.0:8000/api/openapi и сам мейн не отрабатывает https://disk.yandex.ru/i/T8WevQ2h6iUXeA
+#2 Что знаить эта строчка в файле main @app.on_event('shutdown')
+#3 У меня по прежнему не видит импорты, я прочитал что нужно указать путь, https://www.geeksforgeeks.org/python-import-module-from-different-directory/
+и тут https://blog.finxter.com/python-how-to-import-modules-from-another-folder/
+
+но я добавил такой путь (одинарные слешы на двойные заменил), но ничего не изменилось sys.path.insert(0, 'C:\\Users\\Пользователь\\PycharmProjects\\2.2.YAND_SPRINT_2_NEW_MODELS\\fast_api\\db')
+в итоге написал так, вроде не подчеркивает from fast_api.db.elastic import get_elastic
+
+
+4# В этой функции что значит  * в параметрах?
+def orjson_dumps(v, *, default):
+    # orjson.dumps возвращает bytes, а pydantic требует unicode, поэтому декодируем
+    return orjson.dumps(v, default=default).decode()
+
+#5 Кешировать ответы ручек, запрошенных с одинаковыми параметрами ---- Что значит ручки?
+
+#почему в файле db.redis вот такой тип   redis: Optional[Redis] = None   -вопрос, почему =None?
+
+#6 что значит эта приписка в main @app.on_event('shutdown')? а также строчка 'main:app' - означает что запускается app из майн? Если да то почему так странно написано?
+
+#7. В файле models.film.py  - не совсем понимаю как работает встроенный класс Config? Он дочерний по отношению к Film и что он делате?
+Также тут в классе Film есть description при этом в v1/films.py его нет?
+class Film(BaseModel):
+    id: str
+    title: str
+    description: str
+
+    class Config:
+        # Заменяем стандартную работу с json на более быструю
+        json_loads = orjson.loads
+        json_dumps = orjson_dumps
+#8 Я же правильно понимаю что async def get_by_id(self, film_id: str) -> Optional[Film]:
+строка ->Optional[Film] - это как бы комментарий к коду и он не обязывает возвращать именно объект класса film?
+
+#9 В файле services/films:
+async def _get_film_from_elastic(self, film_id: str) -> Optional[Film]:
+    try:
+        doc = await self.elastic.get('movies', film_id)
+
+Это какая то встроенная утилита что можно просто вызвать elastic.get и получить  информацию по film_id?
+Что в данном случае представляет movies? Это же название базы для постгрес?
+
+№10. Аналогичный вопрос для redis? Я так понимаю тут в теории вообще для redis ничего еще не успели написать (никаких методов) тогда как из него получаеют (в теории это называется
+получить данных из кэша)
+data = await self.redis.get(film_id)
+и также положить данные в КЭШ(он же редис)
+await self.redis.set(film.id, film.json(), expire=FILM_CACHE_EXPIRE_IN_SECONDS)
+
+#11 Еще раз уточните плз как работает эта строка :
+# Внедряем FilmService с помощью Depends(get_film_service)
+@router.get('/{film_id}', response_model=Film) в файле v1/films?
+

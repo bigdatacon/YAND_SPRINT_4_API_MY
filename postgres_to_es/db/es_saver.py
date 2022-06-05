@@ -7,7 +7,27 @@ from settings.settings import Settings
 from settings.schemes import Schemes
 from resources import backoff
 
+
+
+
 logger = logging.getLogger(__name__)
+
+
+#Ниже блок по тестированию функции
+# def save_one( doc: dict, index: str, res):
+#     # self.__get_connection().index(index=index, id=doc['id'], document=doc)
+#     res.index(index=index, id=doc['id'], document=doc)
+#     # return res.index(index=index, id=doc['id'], document=doc)
+
+# # link = "http://elastic:9200"
+# link = "http://127.0.0.1:9200"
+# res = Elasticsearch(link)
+# print(res)
+# # print(res.index(1, '55'))
+#
+# print(save_one({'id': "test"}, 'ind', res))
+# print(res.search(index='ind'))
+
 
 
 class ESSaver(Settings, Schemes):

@@ -1,0 +1,26 @@
+#сбор контейнер
+#docker-compose up -d
+#стандартно - docker-compose build, затем docker-compose up
+
+#инициализация базы в контейнере - в пайчарме не работает только в bash :
+#docker exec -i <идентификатор> bash
+#Затем, когда внутри контейнера
+#python manage.py dbshell < create_shema_and_tables.sql
+#чтобы создать структуру базы данных, и
+#python load_data_vremenni.py
+#чтобы создать наполнение. Ну и exit затем
+
+
+#в файле create_shema_and_tables.sql убрать строку для подключения к постгре "\c movies;"
+
+#в файле load_data_vremenni.py адрес хоста для постгре прописать по имени контейнера(пояснения ниже):
+#Замена хоста в load_data_vremenni - так было надо. Если убрать network_mode: host,
+#то докер-контейрены связываются в виртуальную сеть, в которой каждый получает IP-адрес и доменное имя.
+#Доменное имя соответствует заголовку контейнера в docker-compose.yml - в данном случае postgres, django и nginx.
+#Эти имена можно использовать вместо IP-адресов при обращении к контейнерам
+
+# В файле Dockerfile в корне добавить команды для возможности создавать базу postgres в докер контейнерe
+#RUN apt-get update
+#RUN apt-get install -y postgresql-client
+
+

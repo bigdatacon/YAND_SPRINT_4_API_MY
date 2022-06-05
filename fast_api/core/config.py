@@ -1,7 +1,15 @@
 import os
 from logging import config as logging_config
 
-from core.logger import LOGGING
+# importing sys
+import sys
+
+# adding Folder_2/subfolder to the system path
+sys.path.insert(0, '/Users/Пользователь/PycharmProjects/2.2.YAND_SPRINT_2_NEW_MODELS/fast_api/core')
+
+# from core.logger import LOGGING
+from fast_api.core.logger import LOGGING
+# from ..core.logger import LOGGING
 
 # Применяем настройки логирования
 logging_config.dictConfig(LOGGING)
@@ -12,8 +20,6 @@ PROJECT_NAME = os.getenv('PROJECT_NAME', 'movies')
 # Настройки Redis
 REDIS_HOST = os.getenv('REDIS_HOST', '127.0.0.1')
 REDIS_PORT = int(os.getenv('REDIS_PORT', 6379))
-REDIS_AUTH = os.getenv('REDIS_AUTH', "password")
-
 
 # Настройки Elasticsearch
 ELASTIC_HOST = os.getenv('ELASTIC_HOST', '127.0.0.1')
@@ -21,10 +27,3 @@ ELASTIC_PORT = int(os.getenv('ELASTIC_PORT', 9200))
 
 # Корень проекта
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-
-# Сообщения об ошибках
-class ErrorMessage:
-    FILM_NOT_FOUND = 'Film(s) not found'
-    GENRE_NOT_FOUND = 'Genre(s) not found'
-    PERSON_NOT_FOUND = 'Person(s) not found'
