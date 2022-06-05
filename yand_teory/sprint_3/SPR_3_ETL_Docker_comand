@@ -1,0 +1,234 @@
+#скачать эластик
+#docker run -p 9200:9200 -e "discovery.type=single-node" elasticsearch:7.7.0
+
+#создать виртуальное окружение
+
+#mkdir venv
+#python -m venv venv
+#source venv/bin/activate
+#pip install ipython
+
+#docker system prune -a чтобы удалить все осталовленные контейнеры
+
+#Проверьте, можете ли вы «достучаться» до Elasticsearch:
+#curl http://127.0.0.1:9200
+
+
+#cоздать индекс в иластик через ipython
+import requests
+ans = requests.put("http://127.0.0.1:9200/table", {
+    "mappings": {
+        "properties": {
+            "text_field": {"type": "keyword"},
+            "number": {"type": "long"}
+        }
+    }
+} )
+
+#создать новую запись в эластик
+ans = requests.post("http://127.0.0.1:9200/table/_doc/", json = {
+    "text_field": "my pretty text",
+    "number": 15
+    }
+)
+
+
+#Обновить запись в эластик
+ans = requests.post("http://127.0.0.1:9200/table/_doc/tmsw9YABYyp8YahCc5jc'", json = {
+    "text_field": "my pretty text",
+    "number": 16
+    }
+)
+
+#полчить все данные из индекса
+№curl -XGET http://127.0.0.1:9200/table/_search
+ans = requests.get("http://127.0.0.1:9200/table/_search")
+
+
+#получить данные 1 записи из индекса
+curl -XGET http://127.0.0.1:9200/table/_doc/nZElhnIB-W6dcc_UKo2E
+ans = requests.get("http://127.0.0.1:9200/table/_doc/tmsw9YABYyp8YahCc5jc")
+
+
+#найти записи по условию
+curl -XGET http://127.0.0.1:9200/table/_search -H 'Content-Type: application/json' -d'
+{
+    "query": {
+        "bool": {
+            "filter": [
+                {
+                    "range": {
+                        "number": {
+                            "gt": 10
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}'
+
+ans = requests.get("http://127.0.0.1:9200/table/_search", json =
+{
+    "query": {
+        "bool": {
+            "filter": [
+                {
+                    "range": {
+                        "number": {
+                            "gt": 10
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}
+)
+
+#найти записи по условию но через sql - не работает!!!
+ans = requests.get("http://127.0.0.1:9200/table/_search",
+{
+    "query": "SELECT * FROM \"table\" WHERE number > 10"
+}
+)
+
+#создание нового индекса в котором уже указан тип
+curl -XPUT http://127.0.0.1:9200/table2 -H 'Content-Type: application/json' -d'
+{
+    "mappings": {
+        "properties": {
+            "text_field": {"type": "text"},
+            "number": {"type": "long"}
+        }
+    }
+}'
+
+ans = requests.put("http://127.0.0.1:9200/table2", {
+    "mappings": {
+        "properties": {
+            "text_field": {"type": "text"},
+            "number": {"type": "long"}
+        }
+    }
+} )
+
+#залив данных в индекс table2
+ans = requests.post("http://127.0.0.1:9200/table2/_doc/", json = {
+    "text_field": "my pretty text",
+    "number": 15
+    }
+)
+
+ans = requests.post("http://127.0.0.1:9200/table2/_doc/", json = {
+    "text_field": "my pretty text",
+    "number": 16
+    }
+)
+
+ans = requests.post("http://127.0.0.1:9200/table2/_doc/", json = {
+    "text_field": "my white board",
+    "number": 17
+    }
+)
+
+#поиск записи по слову
+GET /table2/_search
+{
+    "query": {
+        "bool": {
+            "must": [
+                {"match": {"text_field": "my"}}
+            ]
+        }
+    }
+}
+ans = requests.get("http://127.0.0.1:9200/table2/_search", json =
+{
+    "query": {
+        "bool": {
+            "must": [
+                {"match": {"text_field": "my"}}
+            ]
+        }
+    }
+}
+)
+
+#настройка обновления индекса
+ curl -XPUT http://127.0.0.1:9200/table2/_settings -H 'Content-Type: application/json' -d '{
+         "refresh_interval": "1s"
+ }'
+ ans = requests.put("http://127.0.0.1:9200/table2",
+{
+         "refresh_interval": "1s"
+ }
+)
+
+#нечеткий поиск в индексе
+curl -XGET http://127.0.0.1:9200/table2/_search -H 'Content-Type: application/json' -d '
+{
+    "query": {
+        "match": {
+            "text_field": {
+                "query": "whit code",
+                "fuzziness": "auto"
+            }
+        }
+    }
+}'
+ans = requests.get("http://127.0.0.1:9200/table2/_search", json =
+{
+    "query": {
+        "match": {
+            "text_field": {
+                "query": "whit code",
+                "fuzziness": "auto"
+            }
+        }
+    }
+}
+)
+
+#нечеткий поиск в индексе 2 способ
+curl -XGET http://127.0.0.1:9200/table2/_search -H 'Content-Type: application/json' -d '
+{
+    "query": {
+        "query_string": {
+            "default_field": "text_field",
+            "query": "whit~ code"
+        }
+    }
+}'
+
+ans = requests.get("http://127.0.0.1:9200/table2/_search", json =
+{
+    "query": {
+        "query_string": {
+            "default_field": "text_field",
+            "query": "whit~ code"
+        }
+    }
+}
+)
+
+
+#Записать в эластик иначе  через функицю и прочитать
+def save_one( doc: dict, index: str, res):
+    # self.__get_connection().index(index=index, id=doc['id'], document=doc)
+    res.index(index=index, id=doc['id'], document=doc)
+
+#запись
+print(save_one({'id': "test"}, 'ind', res))
+#чтение
+print(res.search(index='ind'))
+
+
+#проверить что данные записались  в эластик
+ipython
+from elasticsearch import Elasticsearch
+es = Elasticsearch('http://127.0.0.1:9200')
+#точный поиск
+es.search(index='movies', query={'match': {'title.raw': "Star Wars: Episode III - Revenge of the Sith"}}, _source_includes=['title'])
+#не точный поиск
+es.search(index='movies', query={'match': {'title': "Star Wars: Episode III - Revenge of the Sith"}}, _source_includes=['title'])

@@ -1,0 +1,7 @@
+#установить кодировку для винды
+Кому-то помог еще такой вариант. До того, как запускать psql командуйте
+SET PGCLIENTENCODING=utf-8
+chcp 65001
+
+#войти в PostgreSQL
+psql --username=postgres --host=127.0.0.1 --port=5432 movies

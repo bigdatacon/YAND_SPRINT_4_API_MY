@@ -1,0 +1,15 @@
+#1 Запуск сервера
+
+#docker build -t simple_server .
+
+#Запуск докера
+docker run --rm --name srv_1 simple_server
+
+#Запуск sh
+#docker exec -it srv_1 sh
+
+#создание сети
+#docker network create --driver bridge my_network
+
+#Пересоздание контейнера и подключение к сети
+#docker run --rm --name srv_1 --network=my_network simple_server
