@@ -1,0 +1,115 @@
+
+
+
+I. Часть вопросов по ветке first (теория яндекса)
+
+#1 после запуска мейн не открывается страница http://0.0.0.0:8000/api/openapi и сам мейн не отрабатывает https://disk.yandex.ru/i/T8WevQ2h6iUXeA
+#2 Что знаить эта строчка в файле main @app.on_event('shutdown')
+#3 У меня по прежнему не видит импорты, я прочитал что нужно указать путь, https://www.geeksforgeeks.org/python-import-module-from-different-directory/
+и тут https://blog.finxter.com/python-how-to-import-modules-from-another-folder/
+
+но я добавил такой путь (одинарные слешы на двойные заменил), но ничего не изменилось sys.path.insert(0, 'C:\\Users\\Пользователь\\PycharmProjects\\2.2.YAND_SPRINT_2_NEW_MODELS\\fast_api\\db')
+в итоге написал так, вроде не подчеркивает from fast_api.db.elastic import get_elastic
+
+
+4# В этой функции что значит  * в параметрах?
+def orjson_dumps(v, *, default):
+    # orjson.dumps возвращает bytes, а pydantic требует unicode, поэтому декодируем
+    return orjson.dumps(v, default=default).decode()
+
+#5 Кешировать ответы ручек, запрошенных с одинаковыми параметрами ---- Что значит ручки?
+
+#почему в файле db.redis вот такой тип   redis: Optional[Redis] = None   -вопрос, почему =None?
+
+#6 что значит эта приписка в main @app.on_event('shutdown')? а также строчка 'main:app' - означает что запускается app из майн? Если да то почему так странно написано?
+
+#7. В файле models.film.py  - не совсем понимаю как работает встроенный класс Config? Он дочерний по отношению к Film и что он делате?
+Также тут в классе Film есть description при этом в v1/films.py его нет?
+class Film(BaseModel):
+    id: str
+    title: str
+    description: str
+
+    class Config:
+        # Заменяем стандартную работу с json на более быструю
+        json_loads = orjson.loads
+        json_dumps = orjson_dumps
+#8 Я же правильно понимаю что async def get_by_id(self, film_id: str) -> Optional[Film]:
+строка ->Optional[Film] - это как бы комментарий к коду и он не обязывает возвращать именно объект класса film?
+
+#9 В файле services/films:
+async def _get_film_from_elastic(self, film_id: str) -> Optional[Film]:
+    try:
+        doc = await self.elastic.get('movies', film_id)
+
+Это какая то встроенная утилита что можно просто вызвать elastic.get и получить  информацию по film_id?
+Что в данном случае представляет movies? Это же название базы для постгрес?
+
+№10. Аналогичный вопрос для redis? Я так понимаю тут в теории вообще для redis ничего еще не успели написать (никаких методов) тогда как из него получаеют (в теории это называется
+получить данных из кэша)
+data = await self.redis.get(film_id)
+и также положить данные в КЭШ(он же редис)
+await self.redis.set(film.id, film.json(), expire=FILM_CACHE_EXPIRE_IN_SECONDS)
+
+#11 Еще раз уточните плз как работает эта строка :
+# Внедряем FilmService с помощью Depends(get_film_service)
+@router.get('/{film_id}', response_model=Film) в файле v1/films?
+
+#12 Я опять пытался просто запушить все файлы в ветку и через git commi -a и через git commit -m но все равно ничего не вышло, как все таки сделать, чтобы не приходилось
+много файлов через add добавлять?
+
+
+
+II. Часть вопросов по ветке another_particip (проект другого участника)
+1. В файле v1.film.py  список жанров получается через
+genre_list = [FilmGenreApi(uuid=genres.get("id"), name=genres.get("name")) for genres in film.genres or []]
+Но я так понял что film Это : film = await film_service.get_by_id(film_id)
+Но в ilm_service.get_by_id нет такого метода genres или чего то подобного ? - как это работает - такой подход много где у него повторяется например :
+    genre_list = [FilmGenreApi(uuid=genres.get("id"), name=genres.get("name")) for genres in film.genres or []]
+    actors_list = [FilmPeopleApi(uuid=actor.get("id"), name=actor.get("name")) for actor in film.actors or []]
+    writers_list = [FilmPeopleApi(uuid=writer.get("id"), name=writer.get("name")) for writer in film.writers or []]
+
+
+2. В этом же файле что и выше:
+async def film_list_by_genre(sort: Literal["-imdb_rating", "+imdb_rating"] = "-imdb_rating",
+                             filter_genre: UUID = Query(None, alias="filter[genre]"),
+                             page_size: int = Query(None, alias="page[size]"),
+                             page_number: int = Query(None, alias="page[number]"),
+                             film_service: FilmService = Depends(get_film_service)
+                             ) -> List[FilmBriefApi]:
+
+Что означают параметры в функции (например) sort: Literal["-imdb_rating", "+imdb_rating"] = "-imdb_rating", или page_size: int = Query(None, alias="page[size]"), почему нельзя просто написать : int?
+И зачем задавать alias и page_number?
+
+2.1.И там далее в services когда эти же параметры что и выше передаются в функцию  - они уже описываются более кратко - почему?
+async def _get_films_from_cache(self,
+                                filter_genre: Optional[UUID],
+                                sort: Optional[str],
+                                page_size: Optional[int],
+                                page_number: Optional[int]
+                                ) -> List[FilmBrief]:
+    key = self._get_films_key(filter_genre, sort, page_size, page_number)
+    data = await self.redis.get(key)
+
+2.2. И как работает вот это?:
+self.redis.get(key)? Там же в ключ передается filter_genre, sort, page_size, page_number
+
+3. Вы по этому спринту что делали? Могли бы свою релизацию в отдельную ветку выложить, может у Вас по понятнее и проще будет , я посмотрю
+
+4. Верно ли что fast_api В принципе должна быть внутри папки movies (проект)?
+5.Могли бы Вы напомнить почему где то в докер-компоуз есть блок билд а где то нет? build: и что значит блок  context: postgres_to_es (например в блоке для etl: context: postgres_to_es)
+6. Что в файле movies_admin/dockerfile значат эти строки (EXPOSE - я так понимаю порт но почему так написан) и я не нашел такую директорию /code?
+
+FROM python:3.10
+EXPOSE 8000
+WORKDIR /code
+
+7.У Вас возможности созвониться так и нет?
+8. Как в реале выглядят эти команды? :
+command: python etl.py
+command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+command: ["python", "main.py"]
+
+9. В докерфайле для фастапи есть строка COPY requirements.txt /fast_api/ но ведь сам requirements находится в той же папке что и fast_api?
+10. В докерфайле для редис есть такая строка #RUN ["redis-server", "/usr/local/etc/redis/redis.conf"]
+Я правильно понимаю что она закомментирована ?
