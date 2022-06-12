@@ -16,7 +16,8 @@ services:
 
   django:
     build:
-      context: .
+      context: movies
+      dockerfile: Dockerfile
     container_name: django_movies
     env_file:
       - django.env
@@ -46,6 +47,66 @@ services:
     networks:
       - movies_network
 
+  elastic:
+    #Порсьба выбрать нужный контейнер, но не удалять второй и третий
+    image: elasticsearch:7.7.0
+    #    image: elasticsearch:7.14.0
+    #    image: docker.elastic.co/elasticsearch/elasticsearch:7.15.1-arm64
+    container_name: elastic_movies
+    env_file:
+      - es.env
+    #    ports:
+    #      - "9200:9200"
+    networks:
+      - movies_network
+    depends_on:
+      - postgres
+
+  etl:
+    build:
+      context: postgres_to_es
+      dockerfile: Dockerfile
+    container_name: etl_movies
+    volumes:
+      - ./postgres_to_es:/code
+    networks:
+      - movies_network
+    command: python etl.py
+    depends_on:
+      - postgres
+      - elastic
+
+
+  redis:
+    build:
+      context: redis
+      dockerfile: Dockerfile
+    container_name: redis_movies
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - ./redis/conf/etc:/usr/local/etc/redis
+    #    ports:
+    #      - "6379:6379"
+    networks:
+      - movies_network
+    command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
+
+  fast_api:
+    build:
+      context: fast_api
+      dockerfile: Dockerfile
+    container_name: fast_api_movies
+    env_file:
+      - fa.env
+    volumes:
+      - ./fast_api:/fast_api:ro
+    networks:
+      - movies_network
+    command: ["python", "main.py"]
+    depends_on:
+      - elastic
+      - redis
 
 
 # Указываем Docker, какие именованные тома потребуются сервисам
