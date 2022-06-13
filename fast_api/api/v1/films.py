@@ -1,9 +1,22 @@
 from http import HTTPStatus
 
+from elasticsearch import AsyncElasticsearch
+import aioredis
+import uvicorn
+from elasticsearch import AsyncElasticsearch
+from fastapi import FastAPI
+from fastapi.responses import ORJSONResponse
+
+from fast_api.api.v1 import films
+from fast_api.core import config
+from fast_api.core.logger import LOGGING
+from fast_api.db import elastic, redis
+
+
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
-from services.films import FilmService, get_film_service
+from fast_api.services.films import FilmService, get_film_service
 
 router = APIRouter()
 
@@ -32,6 +45,14 @@ async def film_details(film_id: str, film_service: FilmService = Depends(get_fil
         # и, возможно, данные, которые опасно возвращать
     return Film(id=film.id, title=film.title)
 
-# if __name__ == '__main__':
-#     film_details(2d3a25fc-b0be-4129-ab50-2dc1225efbee, )
+if __name__ == '__main__':
+    es = AsyncElasticsearch(hosts=["127.0.0.1:9200"])
+
+    es.get('movies', "2d3a25fc-b0be-4129-ab50-2dc1225efbee")
+
+
+    redis.redis = await aioredis.create_redis_pool((config.REDIS_HOST, config.REDIS_PORT), minsize=10, maxsize=20)
+    elastic.es = AsyncElasticsearch(hosts=[f'{config.ELASTIC_HOST}:{config.ELASTIC_PORT}'])
+    film_service = FilmService(RedisCache(redis), ElasticStorage(elastic))
+    film_details("2d3a25fc-b0be-4129-ab50-2dc1225efbee", film_service )
 
