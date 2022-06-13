@@ -3,7 +3,6 @@ from http import HTTPStatus
 from typing import List, Literal, Optional
 from uuid import UUID
 
-from core.config import ErrorMessage
 from fastapi import APIRouter, Depends, HTTPException, Query
 from models.genre import Genre_API, GenreBrief_API
 from services.genre import GenreService, get_genre_service
@@ -18,7 +17,7 @@ async def genre_details(
 ) -> Genre_API:
     genre = await genre_service.get_by_id(genre_id)
     if not genre:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=ErrorMessage.GENRE_NOT_FOUND)
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Genre not found")
     return Genre_API(
         uuid=genre.uuid,
         name=genre.name,
@@ -48,7 +47,7 @@ async def genre_list(sort: Literal["name.raw"] = "name.raw",
         # Если выборка пустая, отдаём 404 статус
         # Желательно пользоваться уже определёнными HTTP-статусами, которые содержат enum
         # Такой код будет более поддерживаемым
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=ErrorMessage.GENRE_NOT_FOUND)
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Genre not found")
     return [
         GenreBrief_API(uuid=genre.id, name=genre.name, description=genre.description)
         for genre in genres
