@@ -1,0 +1,13 @@
+{
+  "film_work_pg": {
+    "host": "127.0.0.1",
+    "port": 5432,
+    "dbname": "movies",
+    "password": "123",
+    "user": "postgres"
+  },
+  "film_work_es": {
+    "host": "127.0.0.1",
+    "port": 9200
+  }
+}

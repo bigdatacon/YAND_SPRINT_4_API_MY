@@ -1,0 +1,25 @@
+# Файл должен начинаться с тега версии. Используем последнюю.
+version: '3'
+services:
+  backend:
+    build:
+      context: .
+    ports:
+      # Перенаправляем запросы, поступающие к localhost:8010 на порт 8010. 
+      - 8010:8010
+    volumes:
+      # Задаём mount bind для каталога хост-машины. До запуска Docker Сompose нужно создать каталог host_volume
+      - ./host_volume:/internal_volume
+     # Просим Docker привязать к контейнеру именованный том media
+      - media:/media
+  neighbour:
+    image: curlimages/curl:latest
+    entrypoint: ["curl", "-s", "backend:8010"]
+    depends_on:
+      - backend
+    # Docker будет вечно перезапускать контейнер
+    restart: always
+
+# Указываем Docker, какие именованные тома потребуются сервисам
+volumes: 
+  media:
