@@ -8,7 +8,7 @@ import sys
 sys.path.insert(0, '/Users/Пользователь/PycharmProjects/2.2.YAND_SPRINT_2_NEW_MODELS/fast_api/core')
 
 # from core.logger import LOGGING
-from fast_api.core.logger import LOGGING
+from core.logger import LOGGING
 # from ..core.logger import LOGGING
 
 # Применяем настройки логирования
