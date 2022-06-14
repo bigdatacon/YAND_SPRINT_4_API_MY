@@ -16,7 +16,7 @@ services:
 
   django:
     build:
-      context: movies
+      context: .
       dockerfile: Dockerfile
     container_name: django_movies
     env_file:
