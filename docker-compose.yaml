@@ -55,8 +55,8 @@ services:
     container_name: elastic_movies
     env_file:
       - es.env
-    #    ports:
-    #      - "9200:9200"
+    ports:
+      - "9200:9200"
     networks:
       - movies_network
     depends_on:
