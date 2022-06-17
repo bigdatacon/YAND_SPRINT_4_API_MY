@@ -362,3 +362,15 @@ pip install --upgrade pip
 27. данный вопрос видео - касается функции services/film _get_films_by_genre_from_elastic
 
 28. Как в ipython проверить выполнение функции _get_films_by_genre_from_elastic из services/film _get_films_by_genre_from_elastic?
+
+29.  в services/film :
+async def _get_films_by_genre_from_elastic(self,
+                                               filter_genre: Optional[UUID],
+                                               sort: Optional[str],
+                                               page_size: Optional[int],
+                                               page_number: Optional[int]
+                                               ) -> List[FilmBrief]:
+
+        sort_order, sort_column = sort[0], sort[1:]
+
+Не совсем понимабю что попадает в sort? по Идее простоа строка с "-imdb_rating"?
