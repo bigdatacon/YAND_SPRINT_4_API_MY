@@ -343,3 +343,22 @@ pip install --upgrade pip
 23. Зачем в моделях фильма 2 по факту одинаковых класса
 
 
+23. В папке db есть файлы cashe.py и storage.py - они где то используются или это просто наработки?
+24.В файле services/film есть функция
+    def _get_films_key(self, *args):
+        key = ("films", args)
+        return str(key)
+
+ получается она возвращает строку : "films, arg1, arg2 ...."
+ Потом это все используется выше в
+         key = self._get_films_key(filter_genre, sort, page_size, page_number)
+        json = "[{}]".format(','.join(film.json() for film in films))
+        await self.redis.set(key, json, expire=FILM_CACHE_EXPIRE_IN_SECONDS)
+
+ Я правильно понимаю что это просто таким образом формируется составной ключ для записи в редис?
+25. Не поднимается докер теперь
+26. Не могу вытянуть данные из редиса
+
+27. данный вопрос видео - касается функции services/film _get_films_by_genre_from_elastic
+
+28. Как в ipython проверить выполнение функции _get_films_by_genre_from_elastic из services/film _get_films_by_genre_from_elastic?
