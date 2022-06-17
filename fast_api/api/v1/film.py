@@ -53,8 +53,8 @@ async def film_details(film_id: str, film_service: FilmService = Depends(get_fil
     # и, возможно, данные, которые опасно возвращать
 
     genre_list = [FilmGenreApi(uuid=genres.get("id"), name=genres.get("name")) for genres in film.genres or []]
-    actors_list = [FilmPeopleApi(uuid=actor.get("id"), name=actor.get("name")) for actor in film.actors or []]
-    writers_list = [FilmPeopleApi(uuid=writer.get("id"), name=writer.get("name")) for writer in film.writers or []]
+    actors_list = [FilmPeopleApi(uuid=actor.get("id"), full_name=actor.get("name")) for actor in film.actors or []]
+    writers_list = [FilmPeopleApi(uuid=writer.get("id"), full_name=writer.get("name")) for writer in film.writers or []]
 
     return FilmApi(uuid=film.uuid, title=film.title, imdb_rating=film.imdb_rating, description=film.description,
                    genre=genre_list, actors=actors_list, writers=writers_list, director=film.director)
