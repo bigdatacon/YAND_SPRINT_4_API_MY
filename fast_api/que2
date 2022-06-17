@@ -340,3 +340,6 @@ apt-get install cargo -y
 pip install --upgrade pip
 
 
+23. Зачем в моделях фильма 2 по факту одинаковых класса
+
+

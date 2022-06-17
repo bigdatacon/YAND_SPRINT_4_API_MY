@@ -1,0 +1,22 @@
+#получить данные из эластик
+In [1]: from elasticsearch import Elasticsearch
+
+In [2]: es = Elasticsearch('http://127.0.0.1:9200')
+es.get('movies', 'd63caf3f-0358-4797-aca8-797a555c2efe')
+
+
+
+#получить данне из редиса
+# Импорты
+from elasticsearch import Elasticsearch
+import aioredis
+from services.films import FilmService
+
+# Подключаемся к Elastic
+es = Elasticsearch('http://127.0.0.1:9200')
+
+# Подключаемся к Redis
+redis = await aioredis.create_redis_pool(('127.0.0.1', 6379), password='password')
+# Создание объекта FilmService и обращение к нему за получением фильма
+fs = FilmService(elastic=es, redis=redis)
+await fs.get_by_id('d63caf3f-0358-4797-aca8-797a555c2efe')

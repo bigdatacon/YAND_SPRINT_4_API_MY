@@ -1,18 +1,66 @@
-import orjson
+from typing import List, Optional
+from uuid import UUID
 
-# Используем pydantic для упрощения работы при перегонке данных из json в объекты
-from pydantic import BaseModel
+from models._base import OrjsonModel
 
-def orjson_dumps(v, *, default):
-    # orjson.dumps возвращает bytes, а pydantic требует unicode, поэтому декодируем
-    return orjson.dumps(v, default=default).decode()
 
-class Film(BaseModel):
-    id: str
+class FilmPeopleApi(OrjsonModel):
+    uuid: UUID
+    full_name: str
+
+
+class FilmGenreApi(OrjsonModel):
+    uuid: UUID
+    name: str
+
+
+class FilmApi(OrjsonModel):
+    """
+        Подробная информация о фильме - возвращается при запросе детальной информации по UUID фильма.
+        Содержит уникальный идентификатор фильма, его название, рейтинг, описание и пр.
+    """
+    uuid: UUID
     title: str
+    imdb_rating: float
     description: str
+    genre: Optional[List[FilmGenreApi]]
+    actors: Optional[List[FilmPeopleApi]]
+    writers: Optional[List[FilmPeopleApi]]
+    director: Optional[str]
 
-    class Config:
-        # Заменяем стандартную работу с json на более быструю
-        json_loads = orjson.loads
-        json_dumps = orjson_dumps
+
+class FilmBriefApi(OrjsonModel):
+    """
+        Краткая информация о фильме - возвращается при запросе списка
+        фильмов. Содержит уникальный идентификатор фильма, его название
+        и рейтинг.
+    """
+    uuid: UUID
+    title: str
+    imdb_rating: Optional[float]
+
+
+class Film(OrjsonModel):
+    """
+        Подробная инфомарция о фильме - возвращается при запросе детальной инфомарции по UUID фильма.
+        Содержит уникальный идентификатор фильма, его название, рейтинг, описание и пр.
+    """
+    uuid: UUID
+    title: str
+    imdb_rating: float
+    description: str
+    genres: List[dict]
+    actors: Optional[List[dict]]
+    writers: Optional[List[dict]]
+    director: Optional[str]
+
+
+class FilmBrief(OrjsonModel):
+    """
+        Краткая информация о фильме - возвращается при запросе списка
+        фильмов. Содержит уникальный идентификатор фильма, его название
+        и рейтинг.
+    """
+    id: UUID
+    title: str
+    imdb_rating: Optional[float]

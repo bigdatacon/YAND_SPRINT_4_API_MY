@@ -5,9 +5,9 @@ from aioredis import Redis
 from elasticsearch import AsyncElasticsearch, NotFoundError
 from fastapi import Depends
 
-from fast_api.db.elastic import get_elastic
-from fast_api.db.redis import get_redis
-from fast_api.models.film import Film
+from db.elastic import get_elastic
+from db.redis import get_redis
+from models.film import Film
 
 FILM_CACHE_EXPIRE_IN_SECONDS = 60 * 5  # 5 минут
 
@@ -19,6 +19,7 @@ class FilmService:
 
     # get_by_id возвращает объект фильма. Он опционален, так как фильм может отсутствовать в базе
     async def get_by_id(self, film_id: str) -> Optional[Film]:
+        print(f"Getting film {film_id}")
         # Пытаемся получить данные из кеша, потому что оно работает быстрее
         film = await self._film_from_cache(film_id)
         if not film:
@@ -34,10 +35,12 @@ class FilmService:
 
     async def _get_film_from_elastic(self, film_id: str) -> Optional[Film]:
         try:
+            print(f"Getting film {film_id} from Elastic")
             doc = await self.elastic.get('movies', film_id)
             print(f'eto doc: {doc}')
             print(f'eto doc["_source"]: {doc["_source"]}')
         except NotFoundError:
+            print("Returning none")
             return None
         return Film(**doc['_source'])
 
