@@ -358,8 +358,7 @@ pip install --upgrade pip
 
 27. данный вопрос видео - касается функции services/film _get_films_by_genre_from_elastic
 
-28. Как в ipython проверить выполнение функции _get_films_by_genre_from_elastic из services/film _get_films_by_genre_from_elastic?
-29. В пятом спринте изменен код фаст апи, в частности поиск в эластике уже реализован в папке db.storage и db.cashe - если все оставить как в 4 спринте, будет ли работать?
+28. Как в ipython проверить выполнение функции _get_films_by_genre_from_elastic из services/film _get_films_by_genre_from_elastic ну или не через ipython а просто ее вызвать?
+
 30. Вопрос про sorting https://disk.yandex.ru/i/Es2ZneuHkXxSWg
-31.
 
