@@ -376,5 +376,5 @@ indices.delete и indices.create - это встроенные методы эл
 39. Как в данном случае работает поле Field es_host: str = Field("elastic:9200", env="ELASTIC_HOST")?
 40. В папке src/test_film используются методы функции make_get_request(f"/film/{doc['id']}")  - но я не видел нигде импорта этой функции make_get_request
 и где она сама?
-41. 
+41. 41. Не увидел где связь в файле conftest и файлами в папке src?
 
