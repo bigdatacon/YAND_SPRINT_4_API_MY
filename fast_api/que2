@@ -358,8 +358,23 @@ pip install --upgrade pip
 
 27. данный вопрос видео - касается функции services/film _get_films_by_genre_from_elastic
 
-28. Как в ipython проверить выполнение функции _get_films_by_genre_from_elastic из services/film _get_films_by_genre_from_elastic?
-29. В пятом спринте изменен код фаст апи, в частности поиск в эластике уже реализован в папке db.storage и db.cashe - если все оставить как в 4 спринте, будет ли работать?
-30. Вопрос про sorting https://disk.yandex.ru/i/Es2ZneuHkXxSWg
-31.
+28. Как в ipython проверить выполнение функции _get_films_by_genre_from_elastic из services/film _get_films_by_genre_from_elastic ну или не через ipython а просто ее вызвать?
 
+30. Вопрос про sorting https://disk.yandex.ru/i/Es2ZneuHkXxSWg
+31. Для чего нужен абстрактный класс?
+32. что дает @abstractmethod перед функцией?
+33. Что означает  @property перез функцией?
+34. Что выполняет это код es_client.bulk(...) - я правильно понимаю что это просто быстрая запись в индекс эластика (то есть встроенный в эластик метод
+сохранения инфы?)
+35. Как работать со свагером?
+36. В пятом спринте в теории идет речь об rest api - я так и не понял чем он отличается от того api что есть сейчас и в каком спринте и папке можно на него посмотреть?
+37. В 5 спринте кроме папок фаст_апи и tests  - что то правилось?
+
+http://localhost:8000/api/openapi
+
+38. В тестах elastic_search.indices.delete("genres") и elastic_search.indices.create
+indices.delete и indices.create - это встроенные методы эластик?
+39. Как в данном случае работает поле Field es_host: str = Field("elastic:9200", env="ELASTIC_HOST")?
+40. В папке src/test_film используются методы функции make_get_request(f"/film/{doc['id']}")  - но я не видел нигде импорта этой функции make_get_request
+и где она сама?
+41. Не увидел где связь в файле conftest и файлами в папке src?

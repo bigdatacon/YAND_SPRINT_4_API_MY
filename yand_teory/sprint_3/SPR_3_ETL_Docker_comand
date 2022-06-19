@@ -243,9 +243,9 @@ es.get('movies', 'd63caf3f-0358-4797-aca8-797a555c2efe')
 
 #получить данне из редиса
 # Импорты
-from elasticsearch import ElasticSearch
+from elasticsearch import Elasticsearch
 import aioredis
-from services.films import FilmService
+from services.film import FilmService
 
 # Подключаемся к Elastic
 es = Elasticsearch('http://127.0.0.1:9200')
@@ -254,3 +254,45 @@ es = Elasticsearch('http://127.0.0.1:9200')
 redis = await aioredis.create_redis_pool(('127.0.0.1', 6379), password='password')
 
 # Создание объекта FilmService и обращение к нему за получением фильма
+fs = FilmService(elastic=es, redis=redis)
+await fs.get_by_id('d63caf3f-0358-4797-aca8-797a555c2efe')
+
+#уточненная последовательность того что выше
+from aioredis import create_redis_pool
+from elasticsearch import AsyncElasticsearch
+from db.cache import RedisCache
+from db.storage import ElasticStorage
+from services.film import FilmService
+redis = RedisCache(await create_redis_pool(('127.0.0.1', '6379'), password='password'))
+es = ElasticStorage(AsyncElasticsearch("http://127.0.0.1:9200"))
+fs = FilmService(cache=redis, storage=es)
+await fs.get_by_id("11bc3f1d-a53b-4a44-840e-dbfa816f4551")
+
+
+
+
+
+
+
+
+## Поиск по слову в эластик
+ans = requests.get("http://127.0.0.1:9200/movies/_search", json =
+{
+    "query": {
+        "multi_match": {
+            "query": "camp",
+            "fuzziness": "auto",
+            "fields": [
+                "actors_names",
+                "writers_names",
+                "title",
+                "description",
+                "genre"
+            ]
+        }
+    }
+}
+)
+
+#описание API
+http://localhost:8000/api/openapi

@@ -31,6 +31,7 @@ class AbstractStorage(ABC):
 class ElasticStorage(AbstractStorage):
     __conn: AsyncElasticsearch
 
+
     def __init__(self, elastic: Depends(get_elastic)):
         self.__conn = elastic
 

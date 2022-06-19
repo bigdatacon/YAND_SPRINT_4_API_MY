@@ -1,0 +1,30 @@
+Alexey Nikitin, [18.06.2022 19:14]
+- Просмотреть индексы
+curl -XGET http://127.0.0.1:9200/_cat/indices
+
+- Получить все данные из индекса
+curl -XGET http://127.0.0.1:9200/movies/_search
+
+- Удалить индекс:
+curl -XDELETE  http://127.0.0.1:9200/movies/
+
+- Получить маппинг:
+curl -XGET http://127.0.0.1:9200/movies/_mapping
+
+- Поиск данных:
+curl -XGET http://127.0.0.1:9200/movies/_search -H 'Content-Type: application/json' -d'
+{
+    "query": {
+        "multi_match": {
+            "query": "camp",
+            "fuzziness": "auto",
+            "fields": [
+                "actors_names",
+                "writers_names",
+                "title",
+                "description",
+                "genre"
+            ]
+        }
+    }
+}'
