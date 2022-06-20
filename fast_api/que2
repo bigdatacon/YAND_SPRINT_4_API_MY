@@ -378,3 +378,29 @@ indices.delete и indices.create - это встроенные методы эл
 40. В папке src/test_film используются методы функции make_get_request(f"/film/{doc['id']}")  - но я не видел нигде импорта этой функции make_get_request
 и где она сама?
 41. Не увидел где связь в файле conftest и файлами в папке src?
+
+42. То есть основные функции в SRC. В файле conftest - просто функции по созданию тестовых данных в эластике?
+43. Как обеспечивается параллельный запуск тестов до начала запуска основых конейнеров  (с эластик и так далее) если для тестов отдельный ямл и в основном докер-компоузе
+нет ничего о тестах? 
+44.В файле conftest  - как работает этот код и как что такое get_event_loop_policy()?:
+loop = asyncio.get_event_loop_policy().new_event_loop()
+45. (такой вопрос уже задаывал но пока вроде не было ответа) - как тут рабоатет поле Field es_host: str = Field("elastic:9200", env="ELASTIC_HOST")?
+46. В папке src в функции 
+@pytest.mark.asyncio
+async def test_some_film(some_film, make_get_request):
+    """Проверяем, что тестовый фильм доступен по API"""
+    # Считать из файла с данными параметры тестового фильма
+    with open("testdata/some_film.json") as docs_json:
+        docs = json.load(docs_json)
+        doc = docs[0]
+    # Проверить, что данные, возвращаемые API, совпадают с теми что
+    # в файле с тестовыми данными
+    response = await make_get_request(f"/film/{doc['id']}")
+    assert response.status == HTTPStatus.OK
+    data = response.body
+    assert data["uuid"] == doc["id"]
+    assert data["title"] == doc["title"]
+    assert data["imdb_rating"] == doc["imdb_rating"]
+    
+    
+откуда берется функция make_get_request? Я нигде не вижу ее импорта? 
