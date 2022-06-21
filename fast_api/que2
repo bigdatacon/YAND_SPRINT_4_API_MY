@@ -404,3 +404,33 @@ async def test_some_film(some_film, make_get_request):
     
     
 откуда берется функция make_get_request? Я нигде не вижу ее импорта? 
+
+47. Фикстура возвращает функцию inner , то есть на HTML респонс у которого можно прочитать .json() или body() а именно функцию, тогда вопрос
+как получить из этой функции тот же json(), body() и так далее?
+Вот как это получается, если в return innner data = response.body?
+@pytest.fixture
+def make_get_request(session):
+    async def inner(method: str, params: Optional[dict] = None) -> HTTPResponse:
+        params = params or {}
+        url = SERVICE_URL + '/api/v1' + method  # в боевых системах старайтесь так не делать!
+        async with session.get(url, params=params) as response:
+          return HTTPResponse(
+            body=await response.json(),
+            headers=response.headers,
+            status=response.status,
+          )
+    return inner
+
+48. В какой момент запускаются файлы из папки utils? Я не нашел их связи в cinftest
+49. В ямл файле для эластика указан вот такой имадж:
+image: docker.elastic.co/elasticsearch/elasticsearch:7.15.1-arm64
+Откуда вы взяли такое название и я так понимаю это адрес страницы в интернете или как? Почему тогда без http?
+Можно просто написать тот image который для эластика в другом ямл файле mage: elasticsearch:7.7.0?
+50. Не знаю будет ли клитично при запуске но пока не подчеркивает импорты https://disk.yandex.ru/i/QMa3b0JgZI6MEQ
+51. В файле test_film_cahse  Вот такая строка, но в файле conftest не нашел где там данные в редис пишутся?
+cached = await redis.get(f"{doc_id}")
+52. В test_person
+    """Тест запускается с пустым индексом и API должен вернуть ошибку 404"""
+    response = await make_get_request("/person/")
+
+Индекс пустой потому что в conftest ничего по этому пути не создавалось никакой фикстурой ничего?
