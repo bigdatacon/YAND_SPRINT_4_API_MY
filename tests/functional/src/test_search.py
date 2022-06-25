@@ -30,18 +30,20 @@ async def test_search_film(some_film, make_get_request):
     assert data[0]["imdb_rating"] == doc["imdb_rating"]
 
 
+#@pytest.mark.skip("Skipping")
 @pytest.mark.asyncio
 async def test_search_empty(empty_film_index, flush_redis, make_get_request):
     """Тест запускается без фикстур и API должен вернуть ошибку 404"""
 
-    response = await make_get_request("/film/search")
-    assert response.status == HTTPStatus.NOT_FOUND
+    #response = await make_get_request("/film/search")
+    #assert response.status == HTTPStatus.NOT_FOUND
 
-    # async with aiohttp.ClientSession() as session:
-    #     async with session.get(f"http://{API_HOST}/api/v1/film/search") as ans:
-    #         assert ans.status == HTTPStatus.NOT_FOUND
+    async with aiohttp.ClientSession() as session:
+        async with session.get(f"http://{API_HOST}/api/v1/film/search") as ans:
+            assert ans.status == HTTPStatus.NOT_FOUND
 
 
+#@pytest.mark.skip("Skipping")
 @pytest.mark.asyncio
 async def test_no_index(make_get_request, flush_redis):
     """Тест запускается без индекса и API должен должен вернуть ошибку 500"""

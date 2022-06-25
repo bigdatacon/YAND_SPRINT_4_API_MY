@@ -142,7 +142,6 @@ class FilmService(AbstractService):
         page_size: int,
         page_number: int,
     ) -> Optional[FilmBrief]:
-
         films = await self._get_list_from_cache(
             None, None, page_size, page_number, query
         )
